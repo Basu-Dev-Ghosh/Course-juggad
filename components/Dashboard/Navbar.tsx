@@ -79,13 +79,9 @@ const Navbar = () => {
         className="flex md:hidden items-center justify-center md:justify-start px-4 py-2 md:mt-5 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
         href="/dashboard/profile/1"
       >
-        <Image
-          className="object-cover w-[2rem] h-[2rem]  rounded-full"
-          width={30}
-          height={30}
-          src="/owner.png"
-          alt="avatar"
-        />
+        <div className="w-12 h-12  mx-auto md:mx-0 bg-white border-2 flex justify-center items-center  border-gray-300 rounded-full">
+          <p className="text-md">{"AC"}</p>
+        </div>
       </Link>
     </nav>
   );

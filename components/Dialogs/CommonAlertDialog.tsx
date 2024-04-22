@@ -28,7 +28,7 @@ export function CommonAlertDialog({
   return (
     <AlertDialog key={key}>
       <AlertDialogTrigger asChild>{dialogTrigger}</AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent className="z-[1000]">
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>

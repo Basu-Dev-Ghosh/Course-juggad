@@ -38,7 +38,7 @@ const LoginDialog = ({
   return (
     <Dialog key={key} open={visible} modal onOpenChange={setVisibility}>
       <DialogTrigger asChild>{dialogTrigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] z-[1000]">
         {dialogHeader && (
           <DialogHeader>
             <DialogTitle>{dialogHeader}</DialogTitle>
