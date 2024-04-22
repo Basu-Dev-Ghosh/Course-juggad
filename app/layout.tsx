@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Comfortaa } from "next/font/google";
 import "./globals.css";
-
+import { Analytics } from "@vercel/analytics/react";
 const comfortaa = Comfortaa({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -17,7 +17,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={comfortaa.className}>{children}</body>
+      <body className={comfortaa.className}>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
