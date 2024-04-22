@@ -17,7 +17,9 @@ export function useCourse() {
     state.data,
     state.active_link,
   ]);
-
+  function removeSpacesAndLowerCase(input: string) {
+    return input.replace(/\s+/g, "").toLowerCase();
+  }
   async function saveCourseToDB() {
     try {
       const user = await getCurrentUserData();
@@ -33,7 +35,7 @@ export function useCourse() {
 
       await supabase.from("courses").upsert([
         {
-          skill_name,
+          skill_name: removeSpacesAndLowerCase(skill_name),
           course_data: JSON.stringify(data),
           user_id: user.id,
           course_cover,
@@ -139,19 +141,19 @@ export function useCourse() {
     try {
       const supabase = createClient();
       const user = await getCurrentUserData();
+      const skill_name =
+        typeof params.id === "string"
+          ? decodeURIComponent(params.id)
+          : decodeURIComponent(params.id[0]);
       if (!user) {
         throw new Error("User not found");
       }
       const { data, error } = await supabase
         .from("courses")
         .select("*")
-        .eq(
-          "skill_name",
-          typeof params.id === "string"
-            ? decodeURIComponent(params.id)
-            : decodeURIComponent(params.id[0])
-        )
+        .eq("skill_name", skill_name)
         .eq("user_id", user?.id);
+
       if (data) {
         useCourseStore.setState({
           data: JSON.parse(data[0].course_data),
@@ -170,11 +172,7 @@ export function useCourse() {
         navigate("/dashboard/ai");
       }
     } else {
-      useCourseStore.setState({
-        skill_name: null,
-        data: null,
-        active_link: null,
-      });
+      console.log("Getting course data");
       getAndSetCourseData();
     }
 
