@@ -7,7 +7,7 @@ import { logger } from "@/logger";
 import React from "react";
 
 const page = () => {
-  logger.info("Courses hub Page called ");
+  console.log("Courses hub Page called ");
   return (
     <div className="w-full md:max-w-6xl px-4 flex flex-col py-16 h-full md:h-auto ">
       <CoursesHeading />

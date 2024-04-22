@@ -1,13 +1,11 @@
-
 import ProfileCover from "@/components/Dashboard/Profile/ProfileCover";
 import ProfileImage from "@/components/Dashboard/Profile/ProfileImage";
 import TopCourses from "@/components/Dashboard/Profile/TopCourses";
 import { logger } from "@/logger";
 import React from "react";
 
-
 const page = () => {
-  logger.info("Profile Page called ");
+  console.log("Profile Page called ");
   return (
     <section className="max-w-7xl w-full ">
       <ProfileCover />

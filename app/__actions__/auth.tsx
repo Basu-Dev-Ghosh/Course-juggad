@@ -37,7 +37,7 @@ export async function signUp(prevState: any, formData: FormData) {
 
   // Handling auth error
   if (authError) {
-    logger.info(authError);
+    console.log(authError);
 
     return authError.message;
   }
@@ -53,7 +53,7 @@ export async function signUp(prevState: any, formData: FormData) {
 
   // Handling insert error
   if (insertError) {
-    logger.info(insertError);
+    console.log(insertError);
     return insertError.message;
   }
 
@@ -83,7 +83,7 @@ export async function signIn(formData: FormData) {
 
   // Handling auth error
   if (authError) {
-    logger.info(authError);
+    console.log(authError);
 
     return authError.message;
   }

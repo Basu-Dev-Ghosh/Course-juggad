@@ -13,7 +13,7 @@ export async function getAllPublishedCourse() {
     .select("*")
     .eq("is_published", true);
   if (error) {
-    logger.info(error);
+    console.log(error);
     return null;
   }
   return data;
@@ -36,7 +36,7 @@ export async function getAllSavedCourse() {
     )
     .eq("user_id", user.id);
   if (error) {
-    logger.info(error);
+    console.log(error);
     return null;
   }
 

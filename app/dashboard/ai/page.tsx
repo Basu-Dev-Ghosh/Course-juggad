@@ -3,7 +3,7 @@ import { logger } from "@/logger";
 import React from "react";
 
 const page = () => {
-  logger.info("AI Page called ");
+  console.log("AI Page called ");
   return <AiCourseMaker />;
 };
 

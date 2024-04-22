@@ -41,7 +41,7 @@ export function useCourse() {
       ]);
       alert("Course saved");
     } catch (err) {
-      logger.info(err);
+      console.log(err);
       alert("Course saving failed");
     }
   }
@@ -60,7 +60,7 @@ export function useCourse() {
         .eq("user_id", user.id);
       navigate("/dashboard/ai");
     } catch (err) {
-      logger.info(err);
+      console.log(err);
       alert("Course deleting failed");
     }
   }
@@ -79,7 +79,7 @@ export function useCourse() {
       alert("Course published");
       await checkPublishOrNot();
     } catch (err) {
-      logger.info(err);
+      console.log(err);
       alert("Course publishing failed");
     }
   }
@@ -98,7 +98,7 @@ export function useCourse() {
       alert("Course unpublished");
       await checkPublishOrNot();
     } catch (err) {
-      logger.info(err);
+      console.log(err);
       alert("Course unpublishing failed");
     }
   }
@@ -160,7 +160,7 @@ export function useCourse() {
         await checkPublishOrNot();
       }
     } catch (err) {
-      logger.info(err);
+      console.log(err);
     }
   }
 

@@ -60,7 +60,7 @@ export function useAiCourse() {
       useCourseStore.setState({ data, skill_name: skillName });
       navigate(`/dashboard/course/new`);
     } catch (err) {
-      logger.info(err);
+      console.log(err);
       setIsLoading(false);
     }
   }

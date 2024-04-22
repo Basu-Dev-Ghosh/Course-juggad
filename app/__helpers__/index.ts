@@ -8,7 +8,7 @@ export async function getAllPublishedCourse() {
     .select("skill_name,id")
     .eq("is_published", true);
   if (error) {
-    logger.info(error);
+    console.log(error);
     return null;
   }
   return data;
@@ -27,7 +27,7 @@ export async function getAllSavedCourse() {
   `
     );
   if (error) {
-    logger.info(error);
+    console.log(error);
     return null;
   }
 
@@ -39,7 +39,7 @@ export async function getAllUsers() {
   let { data, error } = await supabase.from("users").select("id");
 
   if (error) {
-    logger.info(error);
+    console.log(error);
     return null;
   }
   return data;
@@ -49,7 +49,7 @@ export async function getCreatedCourses() {
   let { data, error } = await supabase.from("courses").select("skill_name");
 
   if (error) {
-    logger.info(error);
+    console.log(error);
     return null;
   }
   return data;

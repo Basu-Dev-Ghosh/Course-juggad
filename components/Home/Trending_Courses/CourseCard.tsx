@@ -26,7 +26,7 @@ const CourseCard = ({ course }: { course: Course }) => {
       ]);
       alert("Course saved");
     } catch (err) {
-      logger.info(err);
+      console.log(err);
       alert("Course saving failed");
     }
   }

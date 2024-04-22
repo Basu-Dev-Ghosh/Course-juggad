@@ -27,7 +27,7 @@ export function useCourseCover() {
         setCover(data[0].course_cover);
       }
     } catch (err) {
-      logger.info(err);
+      console.log(err);
     }
   }
 

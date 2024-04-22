@@ -9,7 +9,7 @@ import Testimonials from "@/components/Home/Testimonials/Testimonials";
 import TrendingCourses from "@/components/Home/Trending_Courses";
 import { logger } from "@/logger";
 export default function Home() {
-  logger.info("Root Page called ");
+  console.log("Root Page called ");
   return (
     <>
       <Header />

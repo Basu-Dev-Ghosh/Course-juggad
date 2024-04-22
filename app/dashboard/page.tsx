@@ -3,7 +3,7 @@ import { logger } from "@/logger";
 import React from "react";
 
 const page = () => {
-  logger.info("Dashboard Page called ");
+  console.log("Dashboard Page called ");
   return (
     <section>
       <Dashboard />

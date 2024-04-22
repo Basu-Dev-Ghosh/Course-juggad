@@ -3,7 +3,7 @@ import { logger } from "@/logger";
 import React from "react";
 
 const page = () => {
-  logger.info("Courses Page called ");
+  console.log("Courses Page called ");
   return <Courses />;
 };
 

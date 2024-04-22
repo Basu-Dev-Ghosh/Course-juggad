@@ -10,7 +10,7 @@ import { logger } from "@/logger";
 import React from "react";
 
 const page = () => {
-  logger.info("Root Courses Page called ");
+  console.log("Root Courses Page called ");
   return (
     <>
       <Header />

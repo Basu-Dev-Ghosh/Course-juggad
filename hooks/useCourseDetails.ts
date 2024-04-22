@@ -37,7 +37,7 @@ export function useCourseDetails() {
       ]);
       alert("Course saved");
     } catch (err) {
-      logger.info(err);
+      console.log(err);
     }
   }
 
