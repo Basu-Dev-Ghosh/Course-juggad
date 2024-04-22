@@ -1,9 +1,8 @@
 "use server";
 import { createClient } from "@/lib/supabase.server";
-import { logger } from "@/logger";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-export async function signUp(prevState: any, formData: FormData) {
+export async function signUp(formData: FormData) {
   // Getting the current state of the form and the form data
   const name = formData.get("fullname");
   const email = formData.get("email");
