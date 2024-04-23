@@ -35,8 +35,7 @@ const Course = () => {
     UnPublishCourse,
   } = useCourse();
 
-  if (courseDataLoading && titleLoading && isPublishedLoading)
-    return <CourseLoading />;
+  if (courseDataLoading) return <CourseLoading />;
 
   return (
     <div className=" w-full mx-auto md:ml-20 max-w-[90rem]  h-fit gap-3 grid grid-cols-12 ">
@@ -109,7 +108,7 @@ const Course = () => {
       </div>
 
       <div className="  h-full md:h-full col-span-12 md:col-span-8 grid md:sticky top-0 left-0">
-        <div className="min-h-[240px] md:min-h-[450px]  col-span-8   md:static z-[100] md:z-0">
+        <div className="min-h-[240px] md:min-h-[450px]  col-span-8 sticky -top-[10px] left-0  md:static z-[100] md:z-0">
           <YoutubeVideo />
         </div>
         <div className="col-span-8 px-3 md:px-16 py-3">

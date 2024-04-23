@@ -26,7 +26,7 @@ const InViewAnimation = ({
       animate={variants && inView ? "open" : "close"}
       whileInView={whileInView}
       transition={{ duration: 0.5 }}
-      viewport={{ once: false }}
+      viewport={{ once: true }}
       variants={variants || undefined}
       ref={ref}
     >
