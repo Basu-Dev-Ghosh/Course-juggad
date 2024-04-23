@@ -15,12 +15,19 @@ import { BiEdit } from "react-icons/bi";
 import { RiGlobalFill } from "react-icons/ri";
 import { useCourse } from "@/hooks/useCourse";
 
-
 const Course = () => {
   const params = useParams();
   const {
     title,
-    isLoading,
+    loaders: {
+      courseDataLoading,
+      titleLoading,
+      isPublishedLoading,
+      isCourseSaving,
+      isCourseDeleting,
+      isCoursePublishing,
+      isCourseUnPublishing,
+    },
     isPublished,
     saveCourseToDB,
     deleteCourse,
@@ -28,11 +35,12 @@ const Course = () => {
     UnPublishCourse,
   } = useCourse();
 
-  return isLoading ? (
-    <CourseLoading />
-  ) : (
-    <div className=" w-full mx-auto md:ml-20 max-w-[90rem] h-[650px] gap-3 grid grid-cols-12 grid-rows-12">
-      <div className="md:col-span-12 col-span-12 mx-2 md:mx-7 mt-3 mb-2 md:mt-0 md:mb-0 rounded-xl h-[50px] flex items-center justify-end gap-4">
+  if (courseDataLoading && titleLoading && isPublishedLoading)
+    return <CourseLoading />;
+
+  return (
+    <div className=" w-full mx-auto md:ml-20 max-w-[90rem]  h-fit gap-3 grid grid-cols-12 ">
+      <div className="md:col-span-12 col-span-12 mx-1 md:mx-7  md:mt-0 md:mb-0 rounded-xl h-[50px]  flex items-center justify-end gap-4">
         {params.id === "new" ? (
           <>
             <Button
@@ -46,7 +54,10 @@ const Course = () => {
             </Button>
             <CommonAlertDialog
               dialogTrigger={
-                <Button className="px-3 md:px-4  py-2 bg-indigo-500  text-sm md:text-base rounded-md flex  ml-1  justify-center items-center">
+                <Button
+                  disabled={isCourseSaving}
+                  className="px-3 md:px-4 disabled:cursor-not-allowed disabled:bg-gray-400 py-2 bg-indigo-500  text-sm md:text-base rounded-md flex  ml-1  justify-center items-center"
+                >
                   <MdSave size={20} className="mr-3" />
                   Save
                 </Button>
@@ -57,23 +68,31 @@ const Course = () => {
           </>
         ) : (
           <>
-            <CommonAlertDialog
-              dialogTrigger={
-                <Button className="px-3 md:px-4  py-2 relative bg-indigo-500  text-sm md:text-base rounded-md flex justify-center items-center">
-                  <RiGlobalFill size={20} className="mr-3" />
-                  {isPublished ? "Unpublish" : "Publish"}
-                </Button>
-              }
-              description={`Are you sure you want to ${
-                isPublished ? "unpublish" : "publish"
-              } this course?`}
-              onConfirm={isPublished ? UnPublishCourse : publishCourse}
-            />
+            {!isPublishedLoading && (
+              <CommonAlertDialog
+                dialogTrigger={
+                  <Button
+                    disabled={isCoursePublishing || isCourseUnPublishing}
+                    className="px-3 md:px-4 disabled:cursor-not-allowed disabled:bg-gray-400 py-2 relative bg-indigo-500  text-sm md:text-base rounded-md flex justify-center items-center"
+                  >
+                    <RiGlobalFill size={20} className="mr-3" />
+                    {isPublished ? "Unpublish" : "Publish"}
+                  </Button>
+                }
+                description={`Are you sure you want to ${
+                  isPublished ? "unpublish" : "publish"
+                } this course?`}
+                onConfirm={isPublished ? UnPublishCourse : publishCourse}
+              />
+            )}
 
             <CommonAlertDialog
               type="delete"
               dialogTrigger={
-                <Button className="px-3 md:px-4  py-2 bg-red-500 ml-1 rounded-md text-sm md:text-base flex justify-center items-center">
+                <Button
+                  disabled={isCourseDeleting}
+                  className="px-3 md:px-4  py-2 disabled:cursor-not-allowed disabled:bg-gray-400 bg-red-500 ml-1 rounded-md text-sm md:text-base flex justify-center items-center"
+                >
                   <IoMdTrash size={20} className="mr-3" />
                   Delete
                 </Button>
@@ -89,12 +108,19 @@ const Course = () => {
         </Button> */}
       </div>
 
-      <div className=" row-span-12 col-span-12 md:col-span-8 grid grid-rows-11">
-        <div className=" row-span-4 md:row-span-8 col-span-8 sticky top-0 left-0 md:static z-[100] md:z-0">
+      <div className="  h-full md:h-full col-span-12 md:col-span-8 grid md:sticky top-0 left-0">
+        <div className="min-h-[240px] md:min-h-[450px]  col-span-8   md:static z-[100] md:z-0">
           <YoutubeVideo />
         </div>
-        <div className=" row-span-7  md:row-span-3 col-span-8 px-3 md:px-16 py-3">
-          <p className="text-2xl font-semibold">{title}</p>
+        <div className="col-span-8 px-3 md:px-16 py-3">
+          {titleLoading ? (
+            <>
+              <div className="w-full h-[24px] mt-6 bg-slate-400 rounded-lg animate-pulse"></div>
+              <div className="w-full h-[18px] mt-1 bg-slate-400 rounded-lg animate-pulse"></div>
+            </>
+          ) : (
+            <p className="text-2xl font-semibold">{title || ""}</p>
+          )}
 
           <div className="flex items-center gap-2 mt-2">
             <SuggestionBox name="Technology" />
@@ -105,7 +131,7 @@ const Course = () => {
           </div>
         </div>
       </div>
-      <div className="row-span-11 overflow-y-scroll my-4 pb-24 col-span-12 md:col-span-4  hidden md:block p-1 rounded-lg ">
+      <div className="row-span-11 scroll-none overflow-y-scroll my-4 pb-24 col-span-12 md:col-span-4  hidden md:block p-1 rounded-lg ">
         <CourseCurriculum />
       </div>
     </div>

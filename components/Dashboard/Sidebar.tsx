@@ -8,7 +8,7 @@ const Sidebar = async () => {
   const user = await getCurrentUserData();
   if (!user) return navigate("/");
   return (
-    <aside className="group md:hover:w-56  z-[100]  transition-all duration-300 ease-in-out  flex flex-row md:flex-col w-full md:w-[5.7rem] md:h-screen md:px-1 py-8 overflow-x-hidden overflow-y-auto bg-white fixed -bottom-3 md:border-r md:rtl:border-r-0 md:  rtl:border-l dark:bg-gray-900 dark:border-gray-700">
+    <aside className="group md:hover:w-48  z-[100]  transition-all duration-300 ease-in-out  flex flex-row md:flex-col w-full md:w-[5.4rem] md:h-screen md:px-1 py-8 overflow-x-hidden overflow-y-auto bg-white fixed -bottom-3 md:border-r md:rtl:border-r-0 md:  rtl:border-l dark:bg-gray-900 dark:border-gray-700">
       <div className="mx-auto hidden md:block">
         <SmallLogo />
       </div>

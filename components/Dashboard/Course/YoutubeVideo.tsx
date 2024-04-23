@@ -9,9 +9,8 @@ const YoutubeVideo = () => {
     state.data,
   ]);
 
- 
   return (
-    <div className="w-full h-full overflow-hidden px-3 md:px-16 py-3 rounded-lg">
+    <div className="w-full h-full overflow-hidden md:px-16  rounded-lg">
       {data && data[0].subtopics[0].youtube_links[0] && (
         <ReactPlayer
           height={"100%"}
@@ -21,7 +20,6 @@ const YoutubeVideo = () => {
           }
           key={active_link}
           playIcon={<FaCirclePlay size={52} color="blue" />}
-          style={{ margin: "auto", borderRadius: "10px" }}
           width={"100%"}
           url={
             active_link || (data ? data[0].subtopics[0].youtube_links[0] : "")

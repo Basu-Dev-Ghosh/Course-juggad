@@ -2,6 +2,7 @@
 import { createClient } from "@/lib/supabase.server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+
 export async function signUp(formData: FormData) {
   // Getting the current state of the form and the form data
   const name = formData.get("fullname");
@@ -134,10 +135,4 @@ export async function navigate(path: string) {
   redirect(path);
 }
 
-export async function getCreatedCourses() {
-  const user = await getCurrentUserData();
-  if (!user) {
-    return null;
-  }
-  return user.courses;
-}
+

@@ -1,18 +1,15 @@
 import { getAllSavedCourse } from "@/app/__actions__/course";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 export function useSavedCourses() {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [savedCourses, setSavedCourses] = useState<Course[] | null>([]);
+  // ------------------Queries------------------
+  // Query for getting created courses from database
+  const { data: savedCourses, isLoading } = useQuery({
+    queryFn: async () => await getAllSavedCourse(),
+    queryKey: ["getting_saved_courses"], //Array according to Documentation
+  });
 
-  async function getCourses() {
-    const courses = await getAllSavedCourse();
-    setSavedCourses(courses);
-    setIsLoading(false);
-  }
-  useEffect(() => {
-    getCourses();
-  }, []);
   return {
     savedCourses,
     isLoading,

@@ -1,221 +1,199 @@
-import { getCurrentUserData, navigate } from "@/app/__actions__/auth";
-import { createClient } from "@/lib/supabase.client";
+// This custom hook is used to get course data from database using parameters in link
+// It is used in components/Dashboard/Course/Course.tsx
+
+import { navigate } from "@/app/__actions__/auth";
+import {
+  UnPublishCourseToDatabase,
+  checkPublishOrNotPublish,
+  deleteCourseById,
+  getCourseFromDatabase,
+  publishCourseToDatabase,
+  saveCourseToDatabase,
+} from "@/app/__actions__/course";
+import { getTitle } from "@/app/__actions__/video";
 import useCourseStore from "@/store/course/course-store";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-var youtubeThumbnail = require("youtube-thumbnail");
-var getYouTubeID = require("get-youtube-id");
-var getYoutubeTitle = require("get-youtube-title");
+import { useEffect } from "react";
 
 export function useCourse() {
+  // Getting parameters from link
   const params = useParams();
-  const [title, setTitle] = useState<string>("");
-  const [isLoading, setisLoading] = useState<boolean>(true);
-  const [isPublished, setIsPublished] = useState<boolean>(true);
-  const [skill_name, data, active_link] = useCourseStore((state) => [
+
+  // Getting queryClient
+  const queryClient = useQueryClient();
+
+  // ---------------- Global States ------------------------------
+  const [course_id, skill_name, data, active_link] = useCourseStore((state) => [
+    state.id,
     state.skill_name,
     state.data,
     state.active_link,
   ]);
-  function removeSpacesAndLowerCase(input: string) {
-    return input.replace(/\s+/g, "").toLowerCase();
-  }
-  async function saveCourseToDB() {
-    try {
-      const user = await getCurrentUserData();
-      if (!user) {
-        throw new Error("User not found");
-      }
-      const supabase = createClient();
-      let course_cover = null;
-      if (data) {
-        var thumbnail = youtubeThumbnail(data[0].subtopics[0].youtube_links[0]);
-        course_cover = thumbnail.default.url;
-      }
 
-      await supabase.from("courses").upsert([
-        {
-          skill_name: removeSpacesAndLowerCase(skill_name),
-          course_data: JSON.stringify(data),
-          user_id: user.id,
-          course_cover,
-        },
-      ]);
-      alert("Course saved");
-    } catch (err) {
-      console.log(err);
-      alert("Course saving failed");
-    }
-  }
+  // Getting skillname from params and decoding
+  const skillName =
+    typeof params.id === "string"
+      ? decodeURIComponent(params.id)
+      : decodeURIComponent(params.id[0]);
 
-  async function deleteCourse() {
-    try {
-      const user = await getCurrentUserData();
-      if (!user) {
-        throw new Error("User not found");
-      }
-      const supabase = createClient();
-      await supabase
-        .from("courses")
-        .delete()
-        .eq("skill_name", skill_name)
-        .eq("user_id", user.id);
-      navigate("/dashboard/ai");
-    } catch (err) {
-      console.log(err);
-      alert("Course deleting failed");
-    }
-  }
-  async function publishCourse() {
-    try {
-      const user = await getCurrentUserData();
-      if (!user) {
-        throw new Error("User not found");
-      }
-      const supabase = createClient();
-      await supabase
-        .from("courses")
-        .update({ is_published: true })
-        .eq("skill_name", skill_name)
-        .eq("user_id", user.id);
-      alert("Course published");
-      await checkPublishOrNot();
-    } catch (err) {
-      console.log(err);
-      alert("Course publishing failed");
-    }
-  }
-  async function UnPublishCourse() {
-    try {
-      const user = await getCurrentUserData();
-      if (!user) {
-        throw new Error("User not found");
-      }
-      const supabase = createClient();
-      await supabase
-        .from("courses")
-        .update({ is_published: false })
-        .eq("skill_name", skill_name)
-        .eq("user_id", user.id);
-      alert("Course unpublished");
-      await checkPublishOrNot();
-    } catch (err) {
-      console.log(err);
-      alert("Course unpublishing failed");
-    }
-  }
+  // ------------------Queries------------------
 
-  async function checkPublishOrNot() {
-    try {
-      const user = await getCurrentUserData();
-      if (!user) {
-        throw new Error("User not found");
-      }
-      const supabase = createClient();
+  // Query for getting course data only if route params is not 'new' because 'new' means that come from generatig from server
+  const {
+    data: courseData,
+    isLoading: courseDataLoading,
+    isError: isCourseDataError,
+    error: courseDataError,
+  } = useQuery({
+    enabled: skillName !== "new",
+    queryFn: async () => await getCourseFromDatabase(skillName),
+    queryKey: ["getting_course", skillName], //Array according to Documentation
+  });
 
-      let { data, error } = await supabase
-        .from("courses")
-        .select("is_published")
-        .eq(
-          "skill_name",
-          typeof params.id === "string"
-            ? decodeURIComponent(params.id)
-            : decodeURIComponent(params.id[0])
-        )
-        .eq("user_id", user.id)
-        .single();
+  // Query for getting the title of video only if active link is not null
+  const {
+    data: title,
+    isLoading: titleLoading,
+    isError: isTitleError,
+    error: titleError,
+  } = useQuery({
+    enabled: active_link !== null,
+    queryFn: async () => await getTitle(active_link, skillName),
+    queryKey: ["getting_title", active_link], //Array according to Documentation
+  });
 
-      if (error) {
-        console.error(error);
-        setIsPublished(false);
-      }
+  // Query for getting a course is published or not only checking for stored courses
+  const {
+    data: isPublished,
+    isLoading: isPublishedLoading,
+    isError: isPublishedError,
+    error: publishedCheckingError,
+  } = useQuery({
+    enabled: skillName !== "new",
+    queryFn: async () => await checkPublishOrNotPublish(skillName),
+    queryKey: ["is_published", skillName], //Array according to Documentation
+  });
 
-      if (data) setIsPublished(data.is_published);
-    } catch (err) {
-      console.error(err);
-      setIsPublished(false);
-    }
-  }
+  // --------------------Mutations---------------------------
 
-  async function getAndSetCourseData() {
-    try {
-      const supabase = createClient();
-      const user = await getCurrentUserData();
-      const skill_name =
-        typeof params.id === "string"
-          ? decodeURIComponent(params.id)
-          : decodeURIComponent(params.id[0]);
-      if (!user) {
-        throw new Error("User not found");
-      }
-      const { data, error } = await supabase
-        .from("courses")
-        .select("*")
-        .eq("skill_name", skill_name)
-        .eq("user_id", user?.id);
+  // Mutation for deleting a course from database
+  const {
+    mutate: deleteCourse,
+    isError: isCourseDeleteError,
+    isPending: isCourseDeleting,
+    error: courseDeleteError,
+  } = useMutation({
+    mutationFn: async () => await deleteCourseById(course_id),
+    onError(error) {
+      console.log(error);
+      alert(error.message);
+    },
+    onSuccess(data) {
+      // ReSetting zustand global state with null
+      useCourseStore.setState({
+        id: null,
+        data: null,
+        skill_name: null,
+        active_link: null,
+      });
+      navigate(`/dashboard/ai`);
+    },
+    mutationKey: ["delte_course", course_id], //Array according to Documentation
+  });
 
-      if (data) {
-        useCourseStore.setState({
-          data: JSON.parse(data[0].course_data),
-          skill_name: data[0].skill_name,
-        });
-        await checkPublishOrNot();
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
+  // Mutation for saving a course to database
+  const {
+    mutate: saveCourseToDB,
+    isError: isCourseSavingError,
+    isPending: isCourseSaving,
+    error: courseSavingError,
+  } = useMutation({
+    mutationFn: async () => await saveCourseToDatabase(skill_name, data),
+    onError(error) {
+      console.log(error);
+      alert(error.message);
+    },
+    onSuccess(data) {
+      // Alerting and redirecting
+      alert("course saved successfully");
+      navigate(`/dashboard/courses`);
+    },
+    mutationKey: ["save_course", skillName], //Array according to Documentation
+  });
 
+  // Mutation for publish a course
+  const {
+    mutate: publishCourse,
+    isError: isCoursePublishingError,
+    isPending: isCoursePublishing,
+    error: coursePublishingError,
+  } = useMutation({
+    mutationFn: async () => await publishCourseToDatabase(course_id),
+    onError(error) {
+      console.log(error);
+      alert(error.message);
+    },
+    onSuccess(data) {
+      // Alerting and redirecting
+      alert("course published successfully");
+
+      // Invalidating the course published data
+      queryClient.invalidateQueries({
+        queryKey: ["is_published", skillName],
+      });
+    },
+    mutationKey: ["publish_course", course_id], //Array according to Documentation
+  });
+
+  // Mutation for un publishing a course
+  const {
+    mutate: UnPublishCourse,
+    isError: isCourseUnPublishingError,
+    isPending: isCourseUnPublishing,
+    error: courseUnPublishingError,
+  } = useMutation({
+    mutationFn: async () => await UnPublishCourseToDatabase(course_id),
+    onError(error) {
+      console.log(error);
+      alert(error.message);
+    },
+    onSuccess(data) {
+      // Alerting and redirecting
+      alert("course unpublished successfully");
+
+      // Invalidating the course published data
+      queryClient.invalidateQueries({
+        queryKey: ["is_published", skillName],
+      });
+    },
+    mutationKey: ["unpublish_course", course_id], //Array according to Documentation
+  });
+
+  // ---------------Effects-----------------------
   useEffect(() => {
-    if (params.id === "new") {
-      if (!skill_name) {
-        navigate("/dashboard/ai");
-      }
-    } else {
-      console.log("Getting course data");
-      getAndSetCourseData();
+    if (courseData) {
+      let data = JSON.parse(courseData[0].course_data);
+      useCourseStore.setState({
+        id: courseData[0].id,
+        data,
+        skill_name: courseData[0].skill_name,
+        active_link: data[0].subtopics[0].youtube_links[0],
+      });
     }
-
-    return () => {
-      if (params.id !== "new")
-        useCourseStore.setState({
-          data: null,
-          skill_name: null,
-          active_link: null,
-        });
-    };
-  }, []);
-
-  useEffect(() => {
-    var id;
-    if (!active_link && data) {
-      id = getYouTubeID(data[0].subtopics[0].youtube_links[0]);
-    } else {
-      id = getYouTubeID(active_link);
-    }
-
-    if (id) {
-      getYoutubeTitle(
-        id,
-        process.env.NEXT_PUBLIC_GOOGLE_YOUTUBE_API_KEY,
-        function (err: any, tl: string) {
-          if (err) {
-            setTitle(`Course juggad of ${skill_name}`);
-          } else {
-            setTitle(tl);
-          }
-        }
-      );
-    }
-
-    if (data) {
-      setisLoading(false);
-    }
-  }, [active_link, data, skill_name]);
+  }, [courseData]);
 
   return {
     title,
-    isLoading,
+    loaders: {
+      courseDataLoading,
+      titleLoading,
+      isPublishedLoading,
+      isCourseSaving,
+      isCourseDeleting,
+      isCoursePublishing,
+      isCourseUnPublishing,
+    },
     isPublished,
     saveCourseToDB,
     deleteCourse,

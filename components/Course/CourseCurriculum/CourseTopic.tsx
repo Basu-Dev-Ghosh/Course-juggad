@@ -20,7 +20,10 @@ const CourseTopic = ({
 }) => {
   return (
     <div className="content-heading">
-      <AccordionItem value={value} className="bg-gray-100 rounded-xl py-2 px-2">
+      <AccordionItem
+        value={value}
+        className="bg-gray-100 rounded-xl py-2 w-full px-2"
+      >
         <AccordionTrigger className="text-left">
           <p>
             Section {index} : {text}

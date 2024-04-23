@@ -173,7 +173,7 @@ then set the desired styles for .card-img. */
   --main-color: #2d2d2d;
   --main-focus: #ffffff;
   width: 250px;
-  height: 300px;
+  height: auto !important;
   background: var(--bg-color);
   border: 1px solid var(--main-color);
   box-shadow: 3px 3px var(--main-color);
@@ -760,6 +760,18 @@ margin-block: 8px;
     width: 0.2em;
   }
 }
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scroll-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scroll-none {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
 
 @media only screen and (max-width: 600px) {
   .card {
@@ -791,5 +803,77 @@ margin-block: 8px;
    .span {
           display: none;
          }
+    .content-heading{
+      padding-inline: 0;
+      margin-inline: 10px;
+    }
+
+        .content-heading .content-heading {
+          margin-inline: 10px;
+        }
     
+        .content-heading::before {
+          content: '';
+          position: absolute;
+          width: 1px;
+          height: 100%;
+          background: #e4e2f8;
+          left: -12px;
+          bottom: -20px;
+    
+    
+        }
+    
+        .content-heading::after {
+          content: '';
+          position: absolute;
+          width: 1px;
+          height: 25%;
+          background: #e4e2f8;
+          left: -12px;
+          top: -10px;
+        }
+    
+        .content-heading:nth-child(1)::after {
+          display: none;
+        }
+    
+        .content-heading:last-child::before {
+          display: none;
+        }
+    
+        .content-block {
+          position: relative;
+        }
+    
+        .content-block::before {
+          content: '';
+          position: absolute;
+          width: 8px;
+          height: 8px;
+          background: #9892de;
+          border-radius: 50%;
+          left: -22.5px;
+          z-index: 11;
+          top: 9px;
+    
+        }
+    
+        .content-heading .content-heading .content-block {
+          position: relative;
+        }
+    
+        .content-heading .content-heading .content-block::after {
+          content: '';
+          position: absolute;
+          width: 40px;
+          height: 1px;
+          background: #cdcaf2;
+          left: -49px;
+    
+          top: 8px;
+          rotate: 50deg;
+          z-index: -10;
+    
+        }
 }

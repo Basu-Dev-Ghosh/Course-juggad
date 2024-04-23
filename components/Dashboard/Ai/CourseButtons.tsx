@@ -10,19 +10,19 @@ const CourseButtons = () => {
   const {
     showForm,
     setShowForm,
-    skillName,
     setSkillName,
     isLoading,
-    setIsLoading,
+    isError,
     getCourse,
     loadingText,
-    controller,
   } = useAiCourse();
 
   return (
     <>
       <div className="text-base md:text-xl text-gray-400 mt-3 md:mt-10 text-center max-w-xl mx-auto">
-        {isLoading ? (
+        {isError ? (
+          <p>Oops! there is an error on our side</p>
+        ) : isLoading ? (
           <div className="text-loader">
             <p className="heading">{loadingText}</p>
             <div className="loading">
@@ -58,9 +58,7 @@ const CourseButtons = () => {
             <div className="mt-4 flex w-full items-center justify-center gap-5 ">
               <Button
                 onClick={() => {
-                  controller.abort();
                   setShowForm(false);
-                  setIsLoading(false);
                 }}
                 className="bg-red-700 relative flex justify-center items-center w-[110px] text-white hover:bg-indigo-700 px-4 py-2 rounded-md"
               >

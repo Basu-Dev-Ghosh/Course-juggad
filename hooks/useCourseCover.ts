@@ -1,57 +1,45 @@
-import { navigate } from "@/app/__actions__/auth";
-import { createClient } from "@/lib/supabase.client";
+import { getCourseFromDatabaseById } from "@/app/__actions__/course";
 import useCourseStore from "@/store/course/course-store";
+import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export function useCourseCover() {
   const [cover, setCover] = useState<string | null>(null);
   const params = useParams();
-  async function getAndSetCourseData() {
-    try {
-      const supabase = createClient();
-      const { data, error } = await supabase
-        .from("courses")
-        .select("*")
-        .eq(
-          "id",
-          typeof params.id === "string"
-            ? decodeURIComponent(params.id)
-            : decodeURIComponent(params.id[0])
-        );
-      if (data) {
-        useCourseStore.setState({
-          data: JSON.parse(data[0].course_data),
-          skill_name: data[0].skill_name,
-        });
-        setCover(data[0].course_cover);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
 
+  let course_id =
+    typeof params.id === "string"
+      ? decodeURIComponent(params.id)
+      : decodeURIComponent(params.id[0]);
+
+  // ------------------Queries------------------
+
+  // Query for getting course data only if route params is not 'new' because 'new' means that come from generatig from server
+  const {
+    data: courseData,
+    isLoading: courseDataLoading,
+    isError: isCourseDataError,
+    error: courseDataError,
+  } = useQuery({
+    enabled: params.id !== null,
+    queryFn: async () => await getCourseFromDatabaseById(course_id),
+    queryKey: ["getting_course", course_id], //Array according to Documentation
+  });
+
+  // ---------------Effects-----------------------
   useEffect(() => {
-    if (params.id === "new") {
-      navigate("/dashboard/ai");
-    } else {
+    if (courseData) {
+      let data = JSON.parse(courseData[0].course_data);
+      setCover(data[0].course_cover);
       useCourseStore.setState({
-        skill_name: null,
-        data: null,
-        active_link: null,
+        id: courseData[0].id,
+        data,
+        skill_name: courseData[0].skill_name,
+        active_link: data[0].subtopics[0].youtube_links[0],
       });
-      getAndSetCourseData();
     }
-
-    return () => {
-      if (params.id !== "new")
-        useCourseStore.setState({
-          data: null,
-          skill_name: null,
-          active_link: null,
-        });
-    };
-  }, []);
+  }, [courseData]);
 
   return { cover, setCover };
 }

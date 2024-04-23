@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 type CourseStore = {
+  id: string | null;
   skill_name: string | null;
   data: CourseData | null;
   setCourseData: (
@@ -14,6 +15,7 @@ type CourseStore = {
 };
 
 const useCourseStore = create<CourseStore>()((set) => ({
+  id: null,
   skill_name: null,
   data: null,
   setCourseData: (courseData: CourseData | null, skillName: string | null) =>

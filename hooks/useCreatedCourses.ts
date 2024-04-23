@@ -1,18 +1,12 @@
-import { getCreatedCourses } from "@/app/__actions__/auth";
-import { useEffect, useState } from "react";
-
+import { getCreatedCourses } from "@/app/__actions__/course";
+import { useQuery } from "@tanstack/react-query";
 export function useCreatedCourses() {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [createdCourses, setCreatedCourses] = useState<Course[] | null>([]);
-
-  async function getCourses() {
-    const courses = await getCreatedCourses();
-    setCreatedCourses(courses);
-    setIsLoading(false);
-  }
-  useEffect(() => {
-    getCourses();
-  }, []);
+  // ------------------Queries------------------
+  // Query for getting created courses from database
+  const { data: createdCourses, isLoading } = useQuery({
+    queryFn: async () => await getCreatedCourses(),
+    queryKey: ["getting_created_courses"], //Array according to Documentation
+  });
 
   return { createdCourses, isLoading };
 }
