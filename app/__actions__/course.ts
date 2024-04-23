@@ -10,47 +10,7 @@ function removeSpacesAndLowerCase(input: string | null) {
   if (input) return input.replace(/\s+/g, "").toLowerCase();
 }
 
-export async function getCourseFromServer(skillName: string | null) {
-  // Check if skill name is provided
-  if (!skillName) throw new Error("Skill name is required");
-  try {
-    // Supabase configuration
-    const cookieStore = cookies();
-    const supabase = createClient(cookieStore);
 
-    // Getting current user session
-    const {
-      data: { session },
-      error,
-    } = await supabase.auth.getSession();
-
-    // If user is not logged in or not able to getting session, throw an error
-    if (error) throw new Error("User not logged in");
-
-    // Fetching course data from server with token
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/skill/${skillName}`,
-      {
-        headers: {
-          Authorization: `Bearer ${session?.access_token}`, // Include token in headers
-        },
-      }
-    );
-
-    // If response is not ok, throw an error
-    if (!res.ok) throw new Error("Failed to fetch course");
-
-    // Convert response to json
-    const data = await res.json();
-
-    // Return data
-    return data;
-  } catch (err) {
-    // If error occurs, log it and throw it
-    console.log(err);
-    throw err;
-  }
-}
 
 export async function getCourseFromDatabase(skillName: string | null) {
   // Check if skill name is provided
