@@ -58,8 +58,20 @@ export function useCourse() {
     isError: isTitleError,
     error: titleError,
   } = useQuery({
-    enabled: active_link !== null,
-    queryFn: async () => await getTitle(active_link, skillName),
+    enabled: data !== null,
+    queryFn: async () => {
+      if (active_link) {
+        return await getTitle(active_link, skillName);
+      } else {
+        if (data) {
+          return await getTitle(
+            data[0].subtopics[0].youtube_links[0],
+            skillName
+          );
+        }
+        return "Title";
+      }
+    },
     queryKey: ["getting_title", active_link], //Array according to Documentation
   });
 

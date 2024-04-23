@@ -8,19 +8,20 @@ import { useMutation } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 
 //Loading texts that will be shown when Getting course
-const loadingTexts = [
-  "We are generating the course for you",
-  "Checking our cached data",
-  "We are almost there",
-  "Generating course content...",
-  "Please wait",
-  "Getting videos from youtube",
-  "We are almost there",
-  "Please wait",
-];
+
 export function useAiCourse() {
   //-----------States--------------
 
+  const loadingTexts = [
+    "We are generating the course for you",
+    "Checking our cached data",
+    "We are almost there",
+    "Generating course content...",
+    "Please wait",
+    "Getting videos from youtube",
+    "We are almost there",
+    "Please wait",
+  ];
   // State for showing form
   const [showForm, setShowForm] = useState<boolean>(false);
   // State for skill name
@@ -39,20 +40,15 @@ export function useAiCourse() {
     isPending: isLoading,
   } = useMutation({
     mutationFn: async () => await getCourseFromServer(skillName),
-    onError(error) {
-      console.log(error);
-      alert(error.message);
-    },
-    onSuccess(data) {
-      // Setting zustand global state with output
+    onSettled(data, error, variables, context) {
       useCourseStore.setState({
         data,
         skill_name: skillName,
-        active_link: data[0].subtopics[0].youtube_links[0],
       });
       // Navigate to the course page
       navigate(`/dashboard/course/new`);
     },
+
     mutationKey: ["course", skillName], //Array according to Documentation
   });
 
