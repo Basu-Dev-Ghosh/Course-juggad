@@ -41,6 +41,11 @@ export function useAiCourse() {
   } = useMutation({
     mutationFn: async () => await getCourseFromServer(skillName),
     onSettled(data, error, variables, context) {
+      if (error) {
+        console.log(error);
+        alert(error);
+        return;
+      }
       useCourseStore.setState({
         data,
         skill_name: skillName,
