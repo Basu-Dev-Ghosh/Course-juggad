@@ -16,8 +16,9 @@ const Sidebar = async () => {
         <div className="w-12 h-12  mx-auto md:mx-0 bg-white border-2 flex justify-center items-center  border-gray-300 rounded-full">
           <p className="text-md">
             {user.full_name
-              ? user.full_name.split(" ")[0][0] +
-                user.full_name.split(" ")[1][0]
+              ? user.full_name.split(" ")[0][0] ||
+                " " + user.full_name.split(" ")[1][0] ||
+                " "
               : "U"}
           </p>
         </div>

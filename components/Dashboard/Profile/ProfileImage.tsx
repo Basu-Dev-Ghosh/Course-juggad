@@ -9,7 +9,9 @@ const ProfileImage = async () => {
       <div className="w-44 h-44 -mt-20 md:ml-16 mx-auto md:mx-0 bg-white border-4 flex justify-center items-center shadow-xl border-white rounded-full">
         <p className="text-2xl">
           {user.full_name
-            ? user.full_name.split(" ")[0][0] + user.full_name.split(" ")[1][0]
+            ? user.full_name.split(" ")[0][0] ||
+              " " + user.full_name.split(" ")[1][0] ||
+              " "
             : "U"}
         </p>
       </div>
