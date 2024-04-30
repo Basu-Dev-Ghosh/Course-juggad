@@ -86,8 +86,9 @@ const Navbar = () => {
           {!isLoading && user && (
             <p className="text-xs">
               {user.full_name
-                ? user.full_name.split(" ")[0][0] +
-                  user.full_name.split(" ")[1][0]
+                ? user.full_name.split(" ")[0][0] ||
+                  " " + user.full_name.split(" ")[1][0] ||
+                  " "
                 : "U"}
             </p>
           )}
