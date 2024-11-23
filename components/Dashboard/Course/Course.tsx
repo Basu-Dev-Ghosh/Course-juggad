@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import YoutubeVideo from "./YoutubeVideo";
 import SuggestionBox from "@/components/Courses/Search/SuggestionBox";
 import CourseCurriculum from "@/components/Course/CourseCurriculum/CourseCurriculum";
@@ -14,9 +14,14 @@ import { CommonAlertDialog } from "@/components/Dialogs/CommonAlertDialog";
 import { BiEdit } from "react-icons/bi";
 import { RiGlobalFill } from "react-icons/ri";
 import { useCourse } from "@/hooks/useCourse";
+import VideoLoadingAnimation from "@/components/Animations/VideoLoadingAnimation";
+import useCourseStore from "@/store/course/course-store";
+import { getCourseFromDatabase } from "@/app/__actions__/course";
+import { useQuery } from "@tanstack/react-query";
 
 const Course = () => {
   const params = useParams();
+
   const {
     title,
     loaders: {
@@ -34,8 +39,17 @@ const Course = () => {
     publishCourse,
     UnPublishCourse,
   } = useCourse();
+  const [isVideoCompleted, setIsVideoCompleted] = useState(false);
 
-  if (courseDataLoading) return <CourseLoading />;
+  const skillName = params.id;
+  const { data: courseData } = useQuery({
+    enabled: skillName !== "new",
+    queryFn: async () => await getCourseFromDatabase(skillName as string),
+    refetchInterval: 5,
+    queryKey: ["getting_course", skillName], //Array according to Documentation
+  });
+
+  if (courseDataLoading) return <VideoLoadingAnimation />;
 
   return (
     <div className=" w-full mx-auto md:ml-20 max-w-[90rem]  h-fit gap-3 grid grid-cols-12 ">
@@ -109,21 +123,49 @@ const Course = () => {
 
       <div className="  h-full md:h-full col-span-12 md:col-span-8 grid md:sticky top-0 left-0">
         <div className="min-h-[240px] md:min-h-[450px]  col-span-8 sticky -top-[10px] left-0  md:static z-[100] md:z-0">
-          <YoutubeVideo />
+          {params.id === "new" ? (
+            <YoutubeVideo
+              onComplete={() => setIsVideoCompleted(true)}
+              skill_name={courseData && courseData[0].skill_name}
+            />
+          ) : (
+            <YoutubeVideo
+              onComplete={() => setIsVideoCompleted(true)}
+              skill_name={courseData && courseData[0].skill_name}
+              course_id={params.id.toString()}
+            />
+          )}
         </div>
         <div className="col-span-8 px-3 md:px-16 py-3">
           {titleLoading ? (
-            <>
-              <div className="w-full h-[24px] mt-6 bg-slate-400 rounded-lg animate-pulse"></div>
-              <div className="w-full h-[18px] mt-1 bg-slate-400 rounded-lg animate-pulse"></div>
-            </>
+            <VideoLoadingAnimation type="description" />
           ) : (
             <p className="text-2xl font-semibold">{title || ""}</p>
           )}
 
           <div className="flex items-center gap-2 mt-2">
-            <SuggestionBox name="Technology" />
-            <SuggestionBox name="AI" />
+            <div className="bg-white w-full p-6 rounded-lg shadow-sm">
+              <h2 className="text-lg font-semibold text-purple-800 mb-4">
+                Overall Progress
+              </h2>
+              <div className="relative pt-1">
+                <div className="flex mb-2 items-center justify-between">
+                  <div>
+                    <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-purple-600 bg-purple-200">
+                      {courseData && courseData[0].progress}%
+                    </span>
+                  </div>
+                </div>
+                <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-purple-200">
+                  <div
+                    style={{
+                      width: `${courseData && courseData[0].progress}%`,
+                    }}
+                    className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-purple-500"
+                  ></div>
+                </div>
+              </div>
+            </div>
           </div>
           <div className="md:hidden w-full  pb-36 mt-7">
             <CourseCurriculum />

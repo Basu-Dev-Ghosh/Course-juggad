@@ -89,7 +89,7 @@ export async function signIn(formData: FormData) {
   }
 
   // Redirect to dashboard
-  redirect("/dashboard/ai");
+  redirect(`/dashboard/profile/${data.user.id}`);
 }
 
 export async function isAuth() {
@@ -122,7 +122,8 @@ export async function getCurrentUserData() {
   let { data, error } = await supabase
     .from("courses")
     .select("*")
-    .eq("user_id", userData.user?.id);
+    .eq("user_id", userData.user?.id)
+    .order("created_at", { ascending: false });
 
   return {
     id: userData.user?.id,
@@ -134,5 +135,3 @@ export async function getCurrentUserData() {
 export async function navigate(path: string) {
   redirect(path);
 }
-
-

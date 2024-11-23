@@ -2,12 +2,14 @@ import React from "react";
 import CourseTopic from "./CourseTopic";
 
 const CourseSubTopic = ({
+  onOpen,
   value,
   index,
   text,
   children,
   description,
 }: {
+  onOpen?: () => void;
   value: string;
   index: string;
   text: string;
@@ -16,6 +18,7 @@ const CourseSubTopic = ({
 }) => {
   return (
     <CourseTopic
+      onOpen={onOpen}
       value={value}
       index={index}
       text={text}

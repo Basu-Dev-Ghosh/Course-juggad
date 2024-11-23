@@ -54,3 +54,45 @@ export async function getCreatedCourses() {
   }
   return data;
 }
+export function getTotalSubtopics(data: CourseData): number {
+  let totalSubtopics = 0;
+  data?.forEach((topic) => {
+    totalSubtopics += topic.subtopics.length;
+  });
+  return totalSubtopics;
+}
+
+export function isValidURL(str: string) {
+  const pattern = new RegExp(
+    "^(https?:\\/\\/)?" + // protocol (http or https)
+      "((([a-zA-Z0-9\\-]+\\.)+[a-zA-Z]{2,})|" + // domain name
+      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR IP (v4) address
+      "(\\:\\d+)?" + // port (optional)
+      "(\\/[-a-zA-Z0-9@:%._\\+~#=]*)*" + // path (optional)
+      "(\\?[;&a-zA-Z0-9%_\\+=-]*)?" + // query string (optional)
+      "(\\#[-a-zA-Z0-9_]*)?$" // fragment (optional)
+  );
+
+  return pattern.test(str);
+}
+
+export function formatTimeSpent(interval: any) {
+  // Convert PostgreSQL interval string to total seconds
+  const totalSeconds = interval ? parseIntervalToSeconds(interval) : 0;
+
+  // Calculate hours, minutes, and seconds
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+  // Format time spent
+  return `${hours}h ${minutes}m`;
+}
+
+export function parseIntervalToSeconds(interval: any) {
+  const match = interval.match(/(\d+):(\d+):(\d+)/);
+  if (match) {
+    const [, hours, minutes, seconds] = match;
+    return Number(hours) * 3600 + Number(minutes) * 60 + Number(seconds);
+  }
+  return 0;
+}

@@ -29,6 +29,7 @@ const Navbar = () => {
       path: "/dashboard/courses",
       isActive: path.includes("/dashboard/courses"),
     },
+    
     {
       name: "Hub",
       icon: <FaStore size={21} />,

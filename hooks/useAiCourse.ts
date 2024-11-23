@@ -2,6 +2,7 @@
 // It is used in components/Dashboard/Ai/CourseButtons.tsx
 
 import { navigate } from "@/app/__actions__/auth";
+import { isValidURL } from "@/app/__helpers__";
 import { createClient } from "@/lib/supabase.client";
 import useCourseStore from "@/store/course/course-store";
 import { useMutation } from "@tanstack/react-query";
@@ -48,15 +49,17 @@ export function useAiCourse() {
       // If user is not logged in or not able to getting session, throw an error
       if (error) throw new Error("User not logged in");
 
+      let url;
+      const isUrl = isValidURL(skillName);
+      url = isUrl
+        ? `/skill/udemy/?url=${encodeURIComponent(skillName)}`
+        : `/skill/?skill_name=${skillName}`;
       // Fetching course data from server with token
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/skill/${skillName}`,
-        {
-          headers: {
-            Authorization: `Bearer ${session?.access_token}`, // Include token in headers
-          },
-        }
-      );
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}${url}`, {
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`, // Include token in headers
+        },
+      });
 
       // If response is not ok, throw an error
       if (!res.ok) throw new Error("Failed to fetch course");
@@ -71,6 +74,16 @@ export function useAiCourse() {
       console.log(err);
       throw err;
     }
+  }
+
+  function calculateTotalVideos(data: any) {
+    let totalVideos = 0;
+    data.forEach((topic: any) => {
+      topic.subtopics.forEach((subtopic: any) => {
+        totalVideos += subtopic.youtube_links.length;
+      });
+    });
+    return totalVideos;
   }
 
   //-----------Mutations--------------
@@ -90,8 +103,10 @@ export function useAiCourse() {
       }
       useCourseStore.setState({
         data,
+        progress: 0,
         skill_name: skillName,
         active_link: data[0].subtopics[0].youtube_links[0],
+        total_videos: calculateTotalVideos(data),
       });
       // Navigate to the course page
       navigate(`/dashboard/course/new`);

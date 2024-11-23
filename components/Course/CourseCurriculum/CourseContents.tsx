@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { Accordion } from "@/components/ui/accordion";
 import CourseTopic from "./CourseTopic";
 import CourseSubTopic from "./CourseSubTopic";
@@ -8,7 +8,12 @@ import { IoIosPlayCircle } from "react-icons/io";
 import useCourseStore from "@/store/course/course-store";
 function CourseContents() {
   const data = useCourseStore((state) => state.data);
-
+  const set_active_subtopic = useCourseStore(
+    (state) => state.set_active_subtopic
+  );
+  useEffect(() => {
+    data && set_active_subtopic(data[0].subtopics[0].subtopic_name);
+  }, [data]);
   return (
     <Accordion
       type="multiple"
@@ -28,6 +33,7 @@ function CourseContents() {
                 course.subtopics.map((subTopic, i) => {
                   return (
                     <CourseSubTopic
+                      onOpen={() => set_active_subtopic(subTopic.subtopic_name)}
                       key={i}
                       value={subTopic.subtopic_name}
                       index={(index + 1).toString() + "." + (i + 1).toString()}

@@ -8,7 +8,6 @@ import Pricing from "@/components/Home/Pricing/Pricing";
 import Testimonials from "@/components/Home/Testimonials/Testimonials";
 import TrendingCourses from "@/components/Home/Trending_Courses";
 
-
 export default function Home() {
   console.log("Root Page called ");
   return (

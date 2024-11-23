@@ -197,6 +197,7 @@ export function useCourse() {
 
   return {
     title,
+    courseData,
     loaders: {
       courseDataLoading,
       titleLoading,

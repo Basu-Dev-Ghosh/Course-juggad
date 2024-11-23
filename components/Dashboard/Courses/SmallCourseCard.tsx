@@ -29,10 +29,7 @@ const SmallCourseCard = ({ course }: { course: Course }) => {
     ) || 0;
 
   return (
-    <Link
-      href={`/dashboard/course/${course.skill_name}`}
-      className="small-course-card"
-    >
+    <Link href={`/dashboard/course/${course.id}`} className="small-course-card">
       <div className="img">
         <Image
           className="w-full h-full object-cover rounded-xl"
@@ -44,7 +41,7 @@ const SmallCourseCard = ({ course }: { course: Course }) => {
       </div>
       <div className="textBox">
         <div className="textContent">
-          <p className="h1 text-sm">
+          <p className="h1 text-sm max-w-md">
             {"Course juggad of " + course.skill_name}
           </p>
           <span className="span">

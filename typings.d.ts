@@ -29,6 +29,8 @@ type Topic = {
   subtopics: SubTopic[];
 };
 
+type CourseData = Topic[] | null;
+
 type Course = {
   id: string;
   skill_name: string;
@@ -37,6 +39,20 @@ type Course = {
   user_id: string;
   course_cover: string;
   is_published?: boolean;
+  is_duplicate?: number;
+  progress?: number;
 };
 
-type CourseData = Topic[] | null;
+
+type Job = {
+  title: string;
+  link: string;
+  snippet: string;
+  company: string;
+  location: string;
+  datePosted: string;
+  image: string;
+  salary: string;
+  jobType: string;
+  applicationDeadline: string;
+};

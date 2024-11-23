@@ -6,12 +6,14 @@ import {
 import React from "react";
 
 const CourseTopic = ({
+  onOpen,
   value,
   index,
   text,
   children,
   description,
 }: {
+  onOpen?: () => void;
   value: string;
   index: string;
   text: string;
@@ -24,7 +26,12 @@ const CourseTopic = ({
         value={value}
         className="bg-gray-100 rounded-xl py-2 w-full px-2"
       >
-        <AccordionTrigger className="text-left">
+        <AccordionTrigger
+          className="text-left"
+          onClick={() => {
+            onOpen && onOpen();
+          }}
+        >
           <p>
             Section {index} : {text}
             <br />

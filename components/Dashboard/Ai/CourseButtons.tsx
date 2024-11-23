@@ -6,7 +6,11 @@ import { MdOutlineHandyman } from "react-icons/md";
 import { BiSolidMagicWand } from "react-icons/bi";
 import { useAiCourse } from "@/hooks/useAiCourse";
 
-const CourseButtons = () => {
+const CourseButtons = ({
+  setIsButtonClicked,
+}: {
+  setIsButtonClicked: (value: boolean) => void;
+}) => {
   const {
     showForm,
     setShowForm,
@@ -19,48 +23,44 @@ const CourseButtons = () => {
 
   return (
     <>
-      <div className="text-base md:text-xl text-gray-400 mt-3 md:mt-10 text-center max-w-xl mx-auto">
-        {isError ? (
-          <p>Oops! there is an error on our side</p>
-        ) : isLoading ? (
-          <div className="text-loader">
-            <p className="heading">{loadingText}</p>
-            <div className="loading">
-              <div className="load" />
-              <div className="load" />
-              <div className="load" />
-              <div className="load" />
-            </div>
-          </div>
-        ) : (
-          " Choose your path: Craft courses manually or let our AI do the heavy lifting. Your learning journey, your way."
+      <div className="text-base md:text-xl text-gray-500 mt-3 md:mt-10 text-center max-w-xl mx-auto">
+        {isError && (
+          <p className="text-red-500">
+            Oops! Something went wrong. Please try again.
+          </p>
         )}
       </div>
+
       <div
         className={`flex justify-center md:items-center border-indigo-400 mt-10 md:mt-20 px-8 ${
           !showForm && "md:border-2"
         } border-dotted flex-col md:flex-row py-1 md:py-5 max-w-6xl md:max-w-4xl mx-auto`}
       >
         {showForm ? (
-          <div className="flex flex-col justify-center">
-            <div className="md:w-[470px] h-[60px] bg-gray-100 rounded-lg flex px-10 items-center">
-              <BiSolidMagicWand size={25} className="mr-3" color="blue" />
+          <div className="flex flex-col justify-center items-center w-full">
+            <div className="md:w-[470px] w-full h-[60px] bg-gray-100 rounded-lg flex px-4 md:px-10 items-center">
+              <BiSolidMagicWand size={25} className="mr-3 text-indigo-600" />
               <input
                 onKeyDown={(e) => {
-                  e.key === "Enter" && getCourse();
+                  if (e.key === "Enter") {
+                    setIsButtonClicked(true);
+                    getCourse();
+                  }
                 }}
                 type="text"
                 onChange={(e) => setSkillName(e.target.value)}
-                placeholder="Enter topic name you want to learn"
-                className=" w-full h-full hover:outline-none hover:bg-transparent bg-transparent hover:border-0 hover:shadow-none focus:outline-none focus:shadow-none focus:border-0 text-xs md:text-sm"
+                placeholder="Enter skill name or paste Udemy course link..."
+                className="w-full h-full bg-transparent focus:outline-none text-xs md:text-sm placeholder-gray-500"
+                aria-label="Course input"
               />
             </div>
-            <div className="mt-4 flex w-full items-center justify-center gap-5 ">
+
+            <div className="mt-4 flex w-full items-center justify-center gap-4 md:gap-5">
               <Button
                 onClick={() => {
                   setShowForm(false);
                 }}
-                className="bg-red-700 relative flex justify-center items-center w-[110px] text-white hover:bg-indigo-700 px-4 py-2 rounded-md"
+                className="bg-red-500 relative flex justify-center items-center w-[110px] text-white hover:bg-red-600 transition px-4 py-2 rounded-md"
               >
                 <p>Cancel</p>
               </Button>
@@ -72,8 +72,11 @@ const CourseButtons = () => {
                 </div>
               ) : (
                 <Button
-                  onClick={getCourse}
-                  className="bg-indigo-700 flex justify-center  md:mt-0 items-center text-white w-[110px] hover:bg-indigo-700 px-4 py-2 rounded-md md:ml-6"
+                  onClick={() => {
+                    setIsButtonClicked(true);
+                    getCourse();
+                  }}
+                  className="bg-indigo-600 flex justify-center items-center w-[110px] text-white hover:bg-indigo-700 transition px-4 py-2 rounded-md"
                 >
                   <p>Generate</p>
                 </Button>
@@ -84,15 +87,18 @@ const CourseButtons = () => {
           <>
             <Button
               disabled={true}
-              className="bg-indigo-700 relative flex justify-center items-center w-[200px] text-white hover:bg-indigo-700 px-4 py-2 rounded-md"
+              className="bg-gray-400 relative flex justify-center items-center w-[200px] text-white cursor-not-allowed hover:bg-gray-400 px-4 py-2 rounded-md"
+              aria-label="Manual course creation coming soon"
             >
               <UpcomingTag />
               <MdOutlineHandyman size={20} className="mr-3" />
               <p>Manually</p>
             </Button>
+
             <Button
               onClick={() => setShowForm(true)}
-              className="bg-indigo-700 flex justify-center mt-3 md:mt-0 items-center text-white w-[200px] hover:bg-indigo-700 px-4 py-2 rounded-md md:ml-6"
+              className="bg-indigo-600 flex justify-center mt-3 md:mt-0 items-center text-white w-[200px] hover:bg-indigo-700 transition px-4 py-2 rounded-md md:ml-6"
+              aria-label="AI course generation"
             >
               <BiSolidMagicWand size={20} className="mr-3" />
               <p>AI Generate</p>
